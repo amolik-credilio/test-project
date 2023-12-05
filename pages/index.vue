@@ -12,6 +12,7 @@
         :key="i"
         class="px-4 pb-2 pt-4 mr-12"
         width="500"
+        height="186"
         type="article"
       ></v-skeleton-loader>
     </div>
@@ -21,6 +22,7 @@
         :key="blog.id"
         :title="blog.title"
         :body="blog.body"
+        :author-id="blog.userId"
         class="my-4"
       />
     </div>
@@ -36,11 +38,11 @@ import { Post } from '~/types/post.type'
 const posts = ref<Post[]>([])
 const page = ref<number>(1)
 
-const url = computed(() => {
+const postsUrl = computed(() => {
   return `https://jsonplaceholder.typicode.com/posts?_page=${page.value}&_limit=10`
 })
 
-const { response, fetching } = fetchData(url)
+const { response, fetching } = fetchData(postsUrl)
 
 posts.value = response.value as Post[]
 
