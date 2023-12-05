@@ -1,5 +1,5 @@
 <template>
-  <v-card elevation="0" outlined class="px-4 pb-2 pt-4 mr-12" max-width="520">
+  <v-card elevation="0" class="px-4 pb-2 pt-4 mr-12" max-width="520">
     <div class="d-flex align-center">
       <v-img
         src="https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg"

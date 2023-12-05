@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <Navbar />
+    <!-- <Navbar /> -->
     <nuxt class="pa-8 d-flex flex-wrap" />
   </v-app>
 </template>
