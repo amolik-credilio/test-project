@@ -2,19 +2,14 @@
   <div class="d-flex flex-column justify-space-between">
     <!-- Category Filter -->
     <div v-if="categories.length" class="d-flex flex-wrap px-4">
-      <v-btn
+      <CategoryFilter
         v-for="(category, i) in categories"
         :key="i"
-        elevation="0"
-        rounded
-        class="mx-2 my-2"
-        :color="selectedCategory.id === category.id ? 'primary' : ''"
-        @click="handleCategoryClick(category)"
-      >
-        <span class="text-caption">
-          {{ category.value }}
-        </span>
-      </v-btn>
+        :category="category"
+        :selected="selectedCategory.id === category.id"
+        @selectCategory="handleCategoryClick(category)"
+      />
+
       <v-btn
         color="red"
         elevation="0"
