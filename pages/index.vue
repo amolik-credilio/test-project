@@ -1,54 +1,47 @@
 <template>
-  <div class="d-flex flex-column">
-    <PaginationControl
-      :pages="10"
-      :total="100"
-      :current-page="page"
-      @updatePage="updatePage"
-    />
-    <div v-if="fetching" class="d-flex flex-wrap mt-8">
-      <v-skeleton-loader
-        v-for="i in 10"
-        :key="i"
-        class="px-4 pb-2 pt-4 mr-12"
-        width="500"
-        height="186"
-        type="article"
-      ></v-skeleton-loader>
+  <div>
+    <SearchBar />
+    <div
+      v-if="fetchingProducts"
+      class="d-flex flex-wrap justify-start align-center"
+    >
+      <SkeletonLoader v-for="i in 18" :key="i" />
     </div>
-    <div v-else class="d-flex flex-wrap mt-8">
-      <BlogCard
-        v-for="blog in response"
-        :key="blog.id"
-        :title="blog.title"
-        :body="blog.body"
-        :author-id="blog.userId"
-        class="my-4"
+    <div v-else class="d-flex flex-wrap justify-start align-center">
+      <ProductCard
+        v-for="product in products.products"
+        :id="product.id"
+        :key="product.id"
+        :thumbnail="product.thumbnail"
+        :title="product.title"
+        :brand="product.brand"
+        :rating="product.rating"
+        :price="product.price"
+        :discount="product.discountPercentage"
+        :description="product.description"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from '@nuxtjs/composition-api'
-import { fetchData } from '~/composables/fetchData'
+import { ref } from 'vue'
+import useFetchData from '~/composables/useFetchData'
 
-import { Post } from '~/types/post.type'
+const products = ref([])
+const fetchingProducts = ref<boolean>(true)
 
-const posts = ref<Post[]>([])
-const page = ref<number>(1)
+const getData = async () => {
+  const { response, fetching, fetchData } = useFetchData(
+    'https://dummyjson.com/products'
+  )
+  await fetchData()
 
-const postsUrl = computed(() => {
-  return `https://jsonplaceholder.typicode.com/posts?_page=${page.value}&_limit=10`
-})
-
-const { response, fetching } = fetchData(postsUrl)
-
-posts.value = response.value as Post[]
-
-const updatePage = (val: number) => {
-  page.value = val
+  products.value = response as any
+  fetchingProducts.value = fetching.value
 }
+
+getData()
 </script>
 
-<style lang="scss"></style>
+<style></style>
