@@ -53,7 +53,7 @@
 
     <!-- Pagination -->
     <div
-      v-if="!selectedCategory.value || !fetchingProducts"
+      v-if="!selectedCategory.value"
       class="d-flex align-center justify-center mt-12 text-center"
     >
       <PaginationControl
