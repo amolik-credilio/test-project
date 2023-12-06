@@ -59,7 +59,7 @@
       <PaginationControl
         :current-page="currentPage"
         :pages="10"
-        @update-page="handlePagination"
+        @updatePage="handlePagination"
       />
     </div>
   </div>
