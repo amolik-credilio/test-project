@@ -1,5 +1,8 @@
 <template>
   <div class="d-flex flex-column justify-space-between">
+    <!-- Search -->
+    <!-- <SearchBar @search="handleSearch" class="mb-6" /> -->
+
     <!-- Category Filter -->
     <div v-if="categories.length" class="d-flex flex-wrap px-4">
       <CategoryFilter
@@ -23,11 +26,18 @@
     </div>
 
     <!-- Loader -->
-    <div
-      v-if="fetchingProducts"
-      class="d-flex flex-wrap justify-start align-center"
-    >
-      <SkeletonLoader v-for="i in 10" :key="i" />
+    <div v-if="fetchingProducts" class="d-flex flex-column mt-6">
+      <div class="d-flex flex-wrap px-4">
+        <v-skeleton-loader
+          v-for="i in 10"
+          :key="i"
+          type="chip"
+          class="mr-4"
+        ></v-skeleton-loader>
+      </div>
+      <div class="d-flex flex-wrap justify-start mt-2">
+        <SkeletonLoader v-for="i in 6" :key="i" />
+      </div>
     </div>
 
     <!-- Product card UI -->
