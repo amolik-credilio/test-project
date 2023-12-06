@@ -9,7 +9,7 @@
         </p>
       </div>
 
-      <div>
+      <div class="description-container">
         <p class="">{{ description }}</p>
       </div>
 
@@ -64,5 +64,11 @@ const discountedPrice = computed(() =>
 }
 .strikethrough {
   text-decoration: line-through;
+}
+.description-container > p {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 </style>
