@@ -1,6 +1,6 @@
 <template>
   <div>
-    <SearchBar />
+    <SearchBar class="mb-6" />
     <div
       v-if="fetchingProducts"
       class="d-flex flex-wrap justify-start align-center"
