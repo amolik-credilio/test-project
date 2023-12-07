@@ -71,15 +71,20 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 
 import assignIds from '~/utils/helper'
 import { Category } from '~/types/category.type'
 import useFetchData from '~/composables/useFetchData'
+import useRoute from '~/composables/useRoute'
+import useRouter from '~/composables/useRouter'
+
+const route = useRoute()
+const router = useRouter()
 
 const products = ref([])
 const categories = ref<Category[]>([])
-const currentPage = ref<number>(1)
+const currentPage = ref<number>(route.query.page ? Number(route.query.page) : 1)
 const fetchingProducts = ref<boolean>(true)
 const selectedCategory = reactive<Category | { id: null; value: null }>({
   id: null,
@@ -143,6 +148,13 @@ const handlePagination = (val: number) => {
   currentPage.value = val
   getProducts()
 }
+
+watch(currentPage, (currentPage, _) => {
+  router.push({
+    path: '/',
+    query: { page: currentPage.toString() },
+  })
+})
 </script>
 
 <style></style>
