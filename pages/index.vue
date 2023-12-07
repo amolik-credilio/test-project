@@ -99,7 +99,7 @@ export default class ProductPage extends Vue {
 
   mounted() {
     this.getCategories()
-    this.getProducts()
+    this.getPaginationParams()
   }
 
   async getProducts() {
@@ -141,8 +141,21 @@ export default class ProductPage extends Vue {
     this.getProducts()
   }
 
+  // Handling pagination
   handlePagination(page: number) {
     this.currentPage = page
+    this.$router.push({
+      path: '/',
+      query: { page: page.toString() },
+    })
+    this.getProducts()
+  }
+
+  // On load - checking params
+  getPaginationParams() {
+    const page = this.$route.query.page
+    this.currentPage = page ? Number(this.$route.query.page) : 1
+    this.handlePagination(this.currentPage)
     this.getProducts()
   }
 }
