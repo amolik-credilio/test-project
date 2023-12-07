@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex flex-column justify-space-between">
-    <!-- Category Filter -->
+    <!-- Filters -->
     <div v-if="categories.length" class="d-flex flex-wrap px-4">
       <CategoryFilter
         v-for="(category, i) in categories"
@@ -33,14 +33,21 @@
         ></v-skeleton-loader>
       </div>
       <div class="d-flex flex-wrap justify-start mt-2">
-        <SkeletonLoader v-for="i in 6" :key="i" />
+        <v-skeleton-loader
+          v-for="i in 12"
+          :key="i"
+          class="mx-auto mt-6"
+          width="270"
+          height="290"
+          type="card"
+        ></v-skeleton-loader>
       </div>
     </div>
 
     <!-- Product card UI -->
     <div v-else class="d-flex flex-wrap justify-start align-center">
       <ProductCard
-        v-for="product in products.products"
+        v-for="product in products"
         :id="product.id"
         :key="product.id"
         :thumbnail="product.thumbnail"
@@ -53,7 +60,7 @@
       />
     </div>
 
-    <!-- Pagination -->
+    <!-- PaginationControl -->
     <div
       v-if="!selectedCategory.value"
       class="d-flex align-center justify-center mt-12 text-center"
@@ -67,95 +74,78 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { onMounted, reactive, ref, watch } from 'vue'
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
 
-import useRoute from '~/composables/useRoute'
-import useRouter from '~/composables/useRouter'
-import useFetchData from '~/composables/useFetchData'
+import assignIds from '~/utils/helper'
 
 import { Product } from '~/types/product.type'
 import { Category } from '~/types/category.type'
 
-import assignIds from '~/utils/helper'
+@Component
+export default class ProductPage extends Vue {
+  products: Product[] = []
+  fetchingProducts: boolean = false
 
-const route = useRoute()
-const router = useRouter()
+  categories: Category[] = []
+  fetchingCategories: boolean = false
+  selectedCategory: Category = {
+    id: null,
+    value: null,
+  }
 
-const products = ref<Product[]>([])
-const categories = ref<Category[]>([])
-const currentPage = ref<number>(route.query.page ? Number(route.query.page) : 1)
-const fetchingProducts = ref<boolean>(true)
-const selectedCategory = reactive<Category | { id: null; value: null }>({
-  id: null,
-  value: null,
-})
+  currentPage: number = 1
 
-onMounted(() => {
-  getProducts()
-  getCategories()
-})
+  mounted() {
+    this.getCategories()
+    this.getProducts()
+  }
 
-// Products
-const getProducts = async () => {
-  const { response, fetching, fetchData } = useFetchData(
-    `https://dummyjson.com/products?limit=10&skip=${
-      (currentPage.value - 1) * 10
-    }`
-  )
-  await fetchData()
-  products.value = response as unknown as Product[]
-  fetchingProducts.value = fetching.value
+  async getProducts() {
+    this.fetchingProducts = true
+    const res = await this.$axios.$get(
+      `https://dummyjson.com/products?limit=10&skip=${
+        (this.currentPage - 1) * 10
+      }`
+    )
+    this.products = res.products as Product[]
+    this.fetchingProducts = false
+  }
+
+  async getCategories() {
+    this.fetchingCategories = true
+    const res = await this.$axios.$get(
+      'https://dummyjson.com/products/categories'
+    )
+    this.categories = assignIds(res)
+    this.fetchingCategories = false
+  }
+
+  async getProductsByCategory() {
+    this.fetchingProducts = true
+    const res = await this.$axios.$get(
+      `https://dummyjson.com/products/category/${this.selectedCategory.value}?limit=0`
+    )
+    this.products = res.products as Product[]
+    this.fetchingProducts = false
+  }
+
+  handleCategoryClick(category: Category) {
+    this.selectedCategory = category
+    this.getProductsByCategory()
+  }
+
+  clearCategory() {
+    this.selectedCategory = { id: null, value: null }
+    this.getProducts()
+  }
+
+  handlePagination(page: number) {
+    this.currentPage = page
+    this.getProducts()
+  }
 }
-
-// Categories
-const getCategories = async () => {
-  const { response, fetchData } = useFetchData(
-    `https://dummyjson.com/products/categories`
-  )
-  await fetchData()
-  categories.value = assignIds(response.value as Array<string>) as Category[]
-}
-
-// Filtering by category - API call
-const getProductsByCategory = async () => {
-  const { response, fetching, fetchData } = useFetchData(
-    `https://dummyjson.com/products/category/${selectedCategory.value}?limit=0`
-  )
-  await fetchData()
-  products.value = response as unknown as Product[]
-  fetchingProducts.value = fetching.value
-}
-
-// Category selection
-const handleCategoryClick = (cat: Category) => {
-  fetchingProducts.value = true
-  selectedCategory.id = cat.id
-  selectedCategory.value = cat.value
-  getProductsByCategory()
-}
-
-// Clear category
-const clearCategory = () => {
-  if (selectedCategory.id) fetchingProducts.value = true
-  selectedCategory.id = null
-  selectedCategory.value = null
-  getProducts()
-}
-
-// Pagination
-const handlePagination = (val: number) => {
-  currentPage.value = val
-  getProducts()
-}
-
-// Updating route query on current page change
-watch(currentPage, (currentPage, _) => {
-  router.push({
-    path: '/',
-    query: { page: currentPage.toString() },
-  })
-})
 </script>
 
 <style></style>

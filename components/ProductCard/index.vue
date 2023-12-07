@@ -25,23 +25,24 @@
   </nuxt-link>
 </template>
 
-<script setup lang="ts">
-import { computed } from 'vue'
+<script lang="ts">
+import { Vue, Prop, Component } from 'vue-property-decorator'
 
-const $props = defineProps<{
-  id: number
-  thumbnail: string
-  title: string
-  brand: string
-  rating: number
-  price: number
-  discount: number
-  description: string
-}>()
+@Component
+export default class ProductCard extends Vue {
+  @Prop({ type: Number, required: true }) id!: number
+  @Prop({ type: String, required: true }) thumbnail!: string
+  @Prop({ type: String, required: true }) title!: string
+  @Prop({ type: String, required: true }) brand!: string
+  @Prop({ type: Number, required: true }) rating!: number
+  @Prop({ type: Number, required: true }) price!: number
+  @Prop({ type: Number, required: true }) discount!: number
+  @Prop({ type: String, required: true }) description!: string
 
-const discountedPrice = computed(() =>
-  Math.round($props.price - ($props.discount / 100) * $props.price)
-)
+  get discountedPrice(): number {
+    return Math.round(this.price - (this.discount / 100) * this.price)
+  }
+}
 </script>
 
 <style lang="scss">

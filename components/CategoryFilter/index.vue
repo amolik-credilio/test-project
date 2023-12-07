@@ -12,18 +12,18 @@
   </v-btn>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
+import { Vue, Prop, Component } from 'vue-property-decorator'
 import { Category } from '~/types/category.type'
 
-const $props = defineProps<{
-  category: Category
-  selected: boolean
-}>()
+@Component
+export default class CategoryFilter extends Vue {
+  @Prop({ type: Object, required: true }) category!: Category
+  @Prop({ type: Boolean, required: true }) selected!: boolean
 
-const $emits = defineEmits(['selectCategory'])
-
-const handleClick = () => {
-  $emits('selectCategory', $props.category)
+  handleClick(): void {
+    this.$emit('selectCategory', this.category)
+  }
 }
 </script>
 

@@ -18,26 +18,27 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, computed } from 'vue'
+<script lang="ts">
+import { Vue, Prop, Component } from 'vue-property-decorator'
 
-const $props = defineProps<{
-  imageUrls: string[]
-}>()
+@Component
+export default class ImageCarousel extends Vue {
+  @Prop({ type: Array, required: true }) imageUrls!: string[]
 
-const currentIndex = ref<number>(0)
+  currentIndex: number = 1
 
-const currentImage = computed(() => {
-  return $props.imageUrls[currentIndex.value]
-})
+  get currentImage(): string {
+    return this.imageUrls[this.currentIndex]
+  }
 
-const nextImage = () => {
-  currentIndex.value = (currentIndex.value + 1) % $props.imageUrls.length
-}
+  prevImage() {
+    this.currentIndex =
+      (this.currentIndex - 1 + this.imageUrls.length) % this.imageUrls.length
+  }
 
-const prevImage = () => {
-  currentIndex.value =
-    (currentIndex.value - 1 + $props.imageUrls.length) % $props.imageUrls.length
+  nextImage() {
+    this.currentIndex = (this.currentIndex + 1) % this.imageUrls.length
+  }
 }
 </script>
 

@@ -22,27 +22,28 @@
   </div>
 </template>
 
-<script setup lang="ts">
-const $props = defineProps<{
-  pages: number
-  total?: number
-  currentPage: number
-}>()
+<script lang="ts">
+import { Vue, Prop, Component } from 'vue-property-decorator'
 
-const $emits = defineEmits(['updatePage'])
+@Component
+export default class PaginationControl extends Vue {
+  @Prop({ type: Number, required: true }) pages!: number
+  @Prop({ type: Number, default: 1 }) currentPage!: number
+  @Prop({ type: Number, required: false }) total!: number
 
-function handlePageClick(val: number) {
-  $emits('updatePage', val)
-}
+  handlePageClick(val: number) {
+    this.$emit('updatePage', val)
+  }
 
-function prev() {
-  if ($props.currentPage === 1) return
-  handlePageClick($props.currentPage - 1)
-}
+  prev() {
+    if (this.currentPage === 1) return
+    this.handlePageClick(this.currentPage - 1)
+  }
 
-function next() {
-  if ($props.currentPage === $props.pages) return
-  handlePageClick($props.currentPage + 1)
+  next() {
+    if (this.currentPage === this.pages) return
+    this.handlePageClick(this.currentPage + 1)
+  }
 }
 </script>
 
