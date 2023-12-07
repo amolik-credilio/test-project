@@ -1,8 +1,5 @@
 <template>
   <div class="d-flex flex-column justify-space-between">
-    <!-- Search -->
-    <!-- <SearchBar @search="handleSearch" class="mb-6" /> -->
-
     <!-- Category Filter -->
     <div v-if="categories.length" class="d-flex flex-wrap px-4">
       <CategoryFilter
@@ -73,16 +70,19 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref, watch } from 'vue'
 
-import assignIds from '~/utils/helper'
-import { Category } from '~/types/category.type'
-import useFetchData from '~/composables/useFetchData'
 import useRoute from '~/composables/useRoute'
 import useRouter from '~/composables/useRouter'
+import useFetchData from '~/composables/useFetchData'
+
+import { Product } from '~/types/product.type'
+import { Category } from '~/types/category.type'
+
+import assignIds from '~/utils/helper'
 
 const route = useRoute()
 const router = useRouter()
 
-const products = ref([])
+const products = ref<Product[]>([])
 const categories = ref<Category[]>([])
 const currentPage = ref<number>(route.query.page ? Number(route.query.page) : 1)
 const fetchingProducts = ref<boolean>(true)
@@ -104,7 +104,7 @@ const getProducts = async () => {
     }`
   )
   await fetchData()
-  products.value = response as any
+  products.value = response as unknown as Product[]
   fetchingProducts.value = fetching.value
 }
 
@@ -114,7 +114,7 @@ const getCategories = async () => {
     `https://dummyjson.com/products/categories`
   )
   await fetchData()
-  categories.value = assignIds(response.value as any) as any
+  categories.value = assignIds(response.value as Array<string>) as Category[]
 }
 
 // Filtering by category - API call
@@ -123,7 +123,7 @@ const getProductsByCategory = async () => {
     `https://dummyjson.com/products/category/${selectedCategory.value}?limit=0`
   )
   await fetchData()
-  products.value = response as any
+  products.value = response as unknown as Product[]
   fetchingProducts.value = fetching.value
 }
 
@@ -149,6 +149,7 @@ const handlePagination = (val: number) => {
   getProducts()
 }
 
+// Updating route query on current page change
 watch(currentPage, (currentPage, _) => {
   router.push({
     path: '/',
