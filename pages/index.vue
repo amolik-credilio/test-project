@@ -1,7 +1,158 @@
 <template>
-  <v-app> </v-app>
+  <div class="d-flex flex-column justify-space-between">
+    <!-- Category Filter -->
+    <div v-if="categories.length" class="d-flex flex-wrap px-4">
+      <CategoryFilter
+        v-for="category in categories"
+        :key="category.id"
+        :category="category"
+        :selected="selectedCategory.id === category.id"
+        @selectCategory="handleCategoryClick(category)"
+      />
+
+      <v-btn
+        color="red"
+        elevation="0"
+        rounded
+        outlined
+        class="ma-2 white--text text-caption"
+        @click="clearCategory()"
+        >Clear selection
+      </v-btn>
+    </div>
+
+    <!-- Loader -->
+    <div v-if="fetchingProducts" class="d-flex flex-column mt-6">
+      <div class="d-flex flex-wrap px-4">
+        <v-skeleton-loader
+          v-for="i in 10"
+          :key="i"
+          type="chip"
+          class="mr-4"
+        ></v-skeleton-loader>
+      </div>
+      <div class="d-flex flex-wrap justify-start mt-2">
+        <SkeletonLoader v-for="i in 6" :key="i" />
+      </div>
+    </div>
+
+    <!-- Product card UI -->
+    <div v-else class="d-flex flex-wrap justify-start align-center">
+      <ProductCard
+        v-for="product in products.products"
+        :id="product.id"
+        :key="product.id"
+        :thumbnail="product.thumbnail"
+        :title="product.title"
+        :brand="product.brand"
+        :rating="product.rating"
+        :price="product.price"
+        :discount="product.discountPercentage"
+        :description="product.description"
+      />
+    </div>
+
+    <!-- Pagination -->
+    <div
+      v-if="!selectedCategory.value"
+      class="d-flex align-center justify-center mt-12 text-center"
+    >
+      <PaginationControl
+        :current-page="currentPage"
+        :pages="10"
+        @updatePage="handlePagination"
+      />
+    </div>
+  </div>
 </template>
 
-<script lang="ts"></script>
+<script setup lang="ts">
+import { onMounted, reactive, ref, watch } from 'vue'
 
-<style lang="scss"></style>
+import useRoute from '~/composables/useRoute'
+import useRouter from '~/composables/useRouter'
+import useFetchData from '~/composables/useFetchData'
+
+import { Product } from '~/types/product.type'
+import { Category } from '~/types/category.type'
+
+import { assignIds } from '~/utils/helper'
+
+const route = useRoute()
+const router = useRouter()
+
+const products = ref<Product[]>([])
+const categories = ref<Category[]>([])
+const currentPage = ref<number>(route.query.page ? Number(route.query.page) : 1)
+const fetchingProducts = ref<boolean>(true)
+const selectedCategory = reactive<Category | { id: null; value: null }>({
+  id: null,
+  value: null,
+})
+
+onMounted(() => {
+  getProducts()
+  getCategories()
+})
+
+// Products
+const getProducts = async () => {
+  const { response, fetching, fetchData } = useFetchData(
+    `https://dummyjson.com/products?limit=10&skip=${
+      (currentPage.value - 1) * 10
+    }`
+  )
+  await fetchData()
+  products.value = response as unknown as Product[]
+  fetchingProducts.value = fetching.value
+}
+
+// Categories
+const getCategories = async () => {
+  const { response, fetchData } = useFetchData(
+    `https://dummyjson.com/products/categories`
+  )
+  await fetchData()
+  categories.value = assignIds(response.value as Array<string>) as Category[]
+}
+
+// Filtering by category - API call
+const getProductsByCategory = async () => {
+  const { response, fetching, fetchData } = useFetchData(
+    `https://dummyjson.com/products/category/${selectedCategory.value}?limit=0`
+  )
+  await fetchData()
+  products.value = response as unknown as Product[]
+  fetchingProducts.value = fetching.value
+}
+
+// Category selection
+const handleCategoryClick = (cat: Category) => {
+  fetchingProducts.value = true
+  selectedCategory.id = cat.id
+  selectedCategory.value = cat.value
+  getProductsByCategory()
+}
+
+// Clear category
+const clearCategory = () => {
+  if (selectedCategory.id) fetchingProducts.value = true
+  selectedCategory.id = null
+  selectedCategory.value = null
+  getProducts()
+}
+
+// Pagination
+const handlePagination = (val: number) => {
+  currentPage.value = val
+  getProducts()
+}
+
+// Updating route query on current page change
+watch(currentPage, (currentPage, _) => {
+  router.push({
+    path: '/',
+    query: { page: currentPage.toString() },
+  })
+})
+</script>
