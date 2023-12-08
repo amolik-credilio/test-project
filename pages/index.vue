@@ -76,7 +76,7 @@ import useFetchData from '~/composables/useFetchData'
 import { Product } from '~/types/product.type'
 import { Category } from '~/types/category.type'
 
-import assignIds from '~/utils/helper'
+import { assignIds } from '~/utils/helper'
 
 const route = useRoute()
 const router = useRouter()
