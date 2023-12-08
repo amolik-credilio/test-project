@@ -45,5 +45,3 @@ function next() {
   handlePageClick($props.currentPage + 1)
 }
 </script>
-
-<style></style>

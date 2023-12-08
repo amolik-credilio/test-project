@@ -15,7 +15,7 @@
         elevation="0"
         rounded
         outlined
-        class="mx-2 my-2 white--text"
+        class="ma-2 white--text"
         @click="clearCategory()"
       >
         <span class="text-caption"> Clear selection </span>
@@ -157,5 +157,3 @@ watch(currentPage, (currentPage, _) => {
   })
 })
 </script>
-
-<style></style>

@@ -28,5 +28,3 @@ const handleInput = () => {
   if (searchQuery.value) $emits('search', searchQuery.value)
 }
 </script>
-
-<style></style>

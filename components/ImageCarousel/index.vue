@@ -1,5 +1,7 @@
 <template>
-  <div class="carousel-container mt-5">
+  <div
+    class="carousel-container d-flex flex-column align-center justify-center mt-5"
+  >
     <v-img
       :src="currentImage"
       alt="carousel"
@@ -43,10 +45,6 @@ const prevImage = () => {
 
 <style lang="scss">
 .carousel-container {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
   width: fit-content;
 }
 .carousel-control {

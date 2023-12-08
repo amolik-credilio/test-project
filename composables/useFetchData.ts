@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 
 export default function (url: string) {
-  const response = ref([])
+  const response = ref<unknown>([])
   const errors = ref([])
   const fetching = ref<boolean>(false)
 

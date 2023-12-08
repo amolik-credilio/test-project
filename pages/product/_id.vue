@@ -3,7 +3,7 @@
     <div v-if="!productData">
       <p class="text-h5">Fetching your product...</p>
     </div>
-    <div v-if="productData" class="product-page-container">
+    <div v-if="productData" class="d-flex flex-column">
       <nuxt-link to="/" class="unset-property">
         <div class="back">
           <v-icon class="blue--text text--darken-2" large
@@ -55,7 +55,7 @@ const getProduct = async () => {
     `https://dummyjson.com/product/${route.params.id}`
   )
   await fetchData()
-  productData.value = response as unknown as Product // Ask for better typescript support
+  productData.value = response.value as Product // Ask for better typescript support
   fetchingProduct.value = fetching.value
 }
 
@@ -65,11 +65,6 @@ const discountedPrice = computed(() => {
 </script>
 
 <style lang="scss" scoped>
-.product-page-container {
-  display: flex;
-  flex-direction: column;
-}
-
 .back {
   display: flex;
   margin-left: -8px;

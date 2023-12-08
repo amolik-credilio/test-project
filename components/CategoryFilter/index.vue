@@ -2,7 +2,7 @@
   <v-btn
     elevation="0"
     rounded
-    class="mx-2 my-2"
+    class="ma-2"
     :color="selected ? 'primary' : ''"
     @click="handleClick"
   >
@@ -26,5 +26,3 @@ const handleClick = () => {
   $emits('selectCategory', $props.category)
 }
 </script>
-
-<style></style>

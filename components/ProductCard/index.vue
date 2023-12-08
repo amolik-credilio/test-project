@@ -1,10 +1,12 @@
 <template>
   <nuxt-link :to="`/product/${id}`" class="unset-property">
-    <div class="product-card">
+    <div
+      class="product-card d-flex flex-column justify-space-between pa-4 ma-6 rounded-lg"
+    >
       <div>
         <h3 class="text-truncate">{{ title }}</h3>
         <p class="grey--text text--darken-1">{{ brand }}</p>
-        <p class="amber--text text-darken-3 font-weight-bold mt-n2">
+        <p class="amber--text text-darken-3 font-weight-bold">
           &#9734; {{ rating }}
         </p>
       </div>
@@ -46,14 +48,9 @@ const discountedPrice = computed(() =>
 
 <style lang="scss">
 .product-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 16px;
   width: 290px;
   height: 290px;
   margin: 24px;
-  border-radius: 12px;
   border: 1px solid rgb(217, 217, 217);
   box-shadow: 1px 2px rgb(237, 237, 237);
   cursor: pointer;
@@ -66,6 +63,7 @@ const discountedPrice = computed(() =>
   text-decoration: line-through;
 }
 .description-container > p {
+  max-height: 100px;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
