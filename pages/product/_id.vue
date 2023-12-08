@@ -1,17 +1,28 @@
 <template>
   <div>
-    <div v-if="!productData">
-      <p class="text-h5">Fetching your product...</p>
-    </div>
+    <p v-if="!productData" class="text-h5">Fetching your product...</p>
+
     <div v-if="productData" class="d-flex flex-column">
-      <nuxt-link to="/" class="unset-property">
+      <!-- <nuxt-link to="/" class="unset-property">
         <div class="back">
           <v-icon class="blue--text text--darken-2" large
             >mdi-chevron-left</v-icon
           >
           <p class="blue--text text--darken-2 text-h6">Back home</p>
         </div>
-      </nuxt-link>
+      </nuxt-link> -->
+
+      <v-btn
+        depressed
+        elevation="0"
+        color="white"
+        width="130"
+        class="mb-2 blue--text text--darken-2"
+        to="/"
+      >
+        <v-icon left large> mdi-chevron-left </v-icon>
+        Back home
+      </v-btn>
 
       <v-divider></v-divider>
       <ImageCarousel :image-urls="productData.images" />

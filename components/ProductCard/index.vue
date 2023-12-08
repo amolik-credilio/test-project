@@ -11,9 +11,7 @@
         </p>
       </div>
 
-      <div class="description-container">
-        <p class="">{{ description }}</p>
-      </div>
+      <p class="product-description">{{ description }}</p>
 
       <div>
         <div class="d-flex align-center font-weight-bold">
@@ -46,7 +44,7 @@ const discountedPrice = computed(() =>
 )
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .product-card {
   width: 290px;
   height: 290px;
@@ -62,7 +60,7 @@ const discountedPrice = computed(() =>
 .strikethrough {
   text-decoration: line-through;
 }
-.description-container > p {
+.product-description {
   max-height: 100px;
   display: -webkit-box;
   -webkit-line-clamp: 3;

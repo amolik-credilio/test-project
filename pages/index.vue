@@ -3,8 +3,8 @@
     <!-- Category Filter -->
     <div v-if="categories.length" class="d-flex flex-wrap px-4">
       <CategoryFilter
-        v-for="(category, i) in categories"
-        :key="i"
+        v-for="category in categories"
+        :key="category.id"
         :category="category"
         :selected="selectedCategory.id === category.id"
         @selectCategory="handleCategoryClick(category)"
@@ -15,10 +15,9 @@
         elevation="0"
         rounded
         outlined
-        class="ma-2 white--text"
+        class="ma-2 white--text text-caption"
         @click="clearCategory()"
-      >
-        <span class="text-caption"> Clear selection </span>
+        >Clear selection
       </v-btn>
     </div>
 

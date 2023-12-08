@@ -2,13 +2,11 @@
   <v-btn
     elevation="0"
     rounded
-    class="ma-2"
+    class="ma-2 text-caption"
     :color="selected ? 'primary' : ''"
     @click="handleClick"
   >
-    <span class="text-caption">
-      {{ category.value }}
-    </span>
+    {{ category.value }}
   </v-btn>
 </template>
 

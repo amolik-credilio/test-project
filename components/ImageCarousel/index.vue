@@ -9,13 +9,13 @@
       height="300"
       contain
     />
-    <div class="carousel-control mt-4">
-      <button @click="prevImage">
+    <div class="carousel-control my-4">
+      <v-btn fab outlined x-small @click="prevImage">
         <v-icon>mdi-chevron-left</v-icon>
-      </button>
-      <button @click="nextImage">
+      </v-btn>
+      <v-btn fab outlined x-small @click="nextImage">
         <v-icon>mdi-chevron-right</v-icon>
-      </button>
+      </v-btn>
     </div>
   </div>
 </template>
@@ -43,7 +43,7 @@ const prevImage = () => {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .carousel-container {
   width: fit-content;
 }

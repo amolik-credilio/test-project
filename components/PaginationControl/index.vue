@@ -1,6 +1,13 @@
 <template>
   <div class="d-flex mx-2 align-center justify-center w-100">
-    <v-btn class="mr-4" fab small elevation="1" @click="prev">
+    <v-btn
+      class="mr-4"
+      fab
+      small
+      elevation="1"
+      @click="prev"
+      :disabled="currentPage === 1"
+    >
       <v-icon> mdi-chevron-left </v-icon>
     </v-btn>
     <v-btn
@@ -16,7 +23,14 @@
       >{{ page }}</v-btn
     >
 
-    <v-btn class="ml-4" fab small elevation="1" @click="next">
+    <v-btn
+      class="ml-4"
+      fab
+      small
+      elevation="1"
+      @click="next"
+      :disabled="currentPage === pages"
+    >
       <v-icon> mdi-chevron-right </v-icon>
     </v-btn>
   </div>
