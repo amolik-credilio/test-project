@@ -39,7 +39,7 @@
     <!-- Product card UI -->
     <div v-else class="d-flex flex-wrap justify-start align-center">
       <ProductCard
-        v-for="product in products.products"
+        v-for="product in products"
         :id="product.id"
         :key="product.id"
         :thumbnail="product.thumbnail"
@@ -66,93 +66,85 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { onMounted, reactive, ref, watch } from 'vue'
-
-import useRoute from '~/composables/useRoute'
-import useRouter from '~/composables/useRouter'
-import useFetchData from '~/composables/useFetchData'
-
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import { assignIds } from '~/utils/helper'
 import { Product } from '~/types/product.type'
 import { Category } from '~/types/category.type'
+@Component
+export default class ProductPage extends Vue {
+  products: Product[] = []
+  fetchingProducts: boolean = false
+  categories: Category[] = []
+  fetchingCategories: boolean = false
+  selectedCategory: Category = {
+    id: null,
+    value: null,
+  }
 
-import { assignIds } from '~/utils/helper'
+  currentPage: number = 1
 
-const route = useRoute()
-const router = useRouter()
+  mounted() {
+    this.getCategories()
+    this.getPaginationParams()
+  }
 
-const products = ref<Product[]>([])
-const categories = ref<Category[]>([])
-const currentPage = ref<number>(route.query.page ? Number(route.query.page) : 1)
-const fetchingProducts = ref<boolean>(true)
-const selectedCategory = reactive<Category | { id: null; value: null }>({
-  id: null,
-  value: null,
-})
+  async getProducts() {
+    this.fetchingProducts = true
+    const res = await this.$axios.$get(
+      `https://dummyjson.com/products?limit=10&skip=${
+        (this.currentPage - 1) * 10
+      }`
+    )
+    this.products = res.products as Product[]
+    this.fetchingProducts = false
+  }
 
-onMounted(() => {
-  getProducts()
-  getCategories()
-})
+  async getCategories() {
+    this.fetchingCategories = true
+    const res = await this.$axios.$get(
+      'https://dummyjson.com/products/categories'
+    )
+    this.categories = assignIds(res)
+    this.fetchingCategories = false
+  }
 
-// Products
-const getProducts = async () => {
-  const { response, fetching, fetchData } = useFetchData(
-    `https://dummyjson.com/products?limit=10&skip=${
-      (currentPage.value - 1) * 10
-    }`
-  )
-  await fetchData()
-  products.value = response as unknown as Product[]
-  fetchingProducts.value = fetching.value
+  async getProductsByCategory() {
+    this.fetchingProducts = true
+    const res = await this.$axios.$get(
+      `https://dummyjson.com/products/category/${this.selectedCategory.value}?limit=0`
+    )
+    this.products = res.products as Product[]
+    this.fetchingProducts = false
+  }
+
+  handleCategoryClick(category: Category) {
+    this.selectedCategory = category
+    this.getProductsByCategory()
+  }
+
+  clearCategory() {
+    this.selectedCategory = { id: null, value: null }
+    this.getProducts()
+  }
+
+  // Handling pagination
+  handlePagination(page: number) {
+    this.currentPage = page
+    this.$router.push({
+      path: '/',
+      query: { page: page.toString() },
+    })
+    this.getProducts()
+  }
+
+  // On load - checking params
+  getPaginationParams() {
+    const page = this.$route.query.page
+    this.currentPage = page ? Number(this.$route.query.page) : 1
+    this.handlePagination(this.currentPage)
+    this.getProducts()
+  }
 }
-
-// Categories
-const getCategories = async () => {
-  const { response, fetchData } = useFetchData(
-    `https://dummyjson.com/products/categories`
-  )
-  await fetchData()
-  categories.value = assignIds(response.value as Array<string>) as Category[]
-}
-
-// Filtering by category - API call
-const getProductsByCategory = async () => {
-  const { response, fetching, fetchData } = useFetchData(
-    `https://dummyjson.com/products/category/${selectedCategory.value}?limit=0`
-  )
-  await fetchData()
-  products.value = response as unknown as Product[]
-  fetchingProducts.value = fetching.value
-}
-
-// Category selection
-const handleCategoryClick = (cat: Category) => {
-  fetchingProducts.value = true
-  selectedCategory.id = cat.id
-  selectedCategory.value = cat.value
-  getProductsByCategory()
-}
-
-// Clear category
-const clearCategory = () => {
-  if (selectedCategory.id) fetchingProducts.value = true
-  selectedCategory.id = null
-  selectedCategory.value = null
-  getProducts()
-}
-
-// Pagination
-const handlePagination = (val: number) => {
-  currentPage.value = val
-  getProducts()
-}
-
-// Updating route query on current page change
-watch(currentPage, (currentPage, _) => {
-  router.push({
-    path: '/',
-    query: { page: currentPage.toString() },
-  })
-})
 </script>

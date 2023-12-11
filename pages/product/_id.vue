@@ -48,9 +48,7 @@
 
         <div class="d-flex mt-2">
           <p>Category:</p>
-          <nuxt-link to="/" class="ml-2">{{
-            toTitleCase(productData.category)
-          }}</nuxt-link>
+          <nuxt-link to="/" class="ml-2">{{ productData.category }}</nuxt-link>
         </div>
 
         <v-divider class="mt-4"></v-divider>
@@ -84,33 +82,37 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
-import useFetchData from '~/composables/useFetchData'
-import useRoute from '~/composables/useRoute'
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
 import { Product } from '~/types/product.type'
+@Component
+export default class ProductPage extends Vue {
+  productData: Product | null = null
+  fetching: boolean = false
 
-import { toTitleCase } from '~/utils/helper'
+  mounted() {
+    this.getProduct()
+  }
 
-const route = useRoute()
+  async getProduct() {
+    this.fetching = true
+    const res = await this.$axios.$get(
+      `https://dummyjson.com/products/${this.$route.params.id}`
+    )
+    this.productData = res as Product
+    this.fetching = false
+  }
 
-const productData = ref<Product>()
-const fetchingProduct = ref<boolean>(false)
-
-onMounted(() => getProduct())
-
-const getProduct = async () => {
-  const { response, fetching, fetchData } = useFetchData(
-    `https://dummyjson.com/product/${route.params.id}`
-  )
-  await fetchData()
-  productData.value = response.value as Product // Ask for better typescript support
-  fetchingProduct.value = fetching.value
+  get discountedPrice(): number {
+    if (this.productData)
+      return Math.round(
+        this.productData.price -
+          (this.productData.discountPercentage / 100) * this.productData.price
+      )
+    else return 0
+  }
 }
-
-const discountedPrice = computed(() => {
-  return 123
-})
 </script>
 
 <style lang="scss" scoped>

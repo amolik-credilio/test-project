@@ -5,8 +5,8 @@
       fab
       small
       elevation="1"
-      @click="prev"
       :disabled="currentPage === 1"
+      @click="prev"
     >
       <v-icon> mdi-chevron-left </v-icon>
     </v-btn>
@@ -28,34 +28,34 @@
       fab
       small
       elevation="1"
-      @click="next"
       :disabled="currentPage === pages"
+      @click="next"
     >
       <v-icon> mdi-chevron-right </v-icon>
     </v-btn>
   </div>
 </template>
 
-<script setup lang="ts">
-const $props = defineProps<{
-  pages: number
-  total?: number
-  currentPage: number
-}>()
+<script lang="ts">
+import { Vue, Prop, Component } from 'vue-property-decorator'
+@Component
+export default class PaginationControl extends Vue {
+  @Prop({ type: Number, required: true }) pages!: number
+  @Prop({ type: Number, default: 1 }) currentPage!: number
+  @Prop({ type: Number, required: false }) total!: number
 
-const $emits = defineEmits(['updatePage'])
+  handlePageClick(val: number) {
+    this.$emit('updatePage', val)
+  }
 
-function handlePageClick(val: number) {
-  $emits('updatePage', val)
-}
+  prev() {
+    if (this.currentPage === 1) return
+    this.handlePageClick(this.currentPage - 1)
+  }
 
-function prev() {
-  if ($props.currentPage === 1) return
-  handlePageClick($props.currentPage - 1)
-}
-
-function next() {
-  if ($props.currentPage === $props.pages) return
-  handlePageClick($props.currentPage + 1)
+  next() {
+    if (this.currentPage === this.pages) return
+    this.handlePageClick(this.currentPage + 1)
+  }
 }
 </script>

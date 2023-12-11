@@ -1,4 +1,4 @@
 export interface Category {
-  id: number
-  value: string
+  id: number | null
+  value: string | null
 }

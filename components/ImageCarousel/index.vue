@@ -10,8 +10,10 @@
   </v-carousel>
 </template>
 
-<script setup lang="ts">
-defineProps<{
-  imageUrls: string[]
-}>()
+<script lang="ts">
+import { Vue, Prop, Component } from 'vue-property-decorator'
+@Component
+export default class ImageCarousel extends Vue {
+  @Prop({ type: Array, required: true }) imageUrls!: string[]
+}
 </script>

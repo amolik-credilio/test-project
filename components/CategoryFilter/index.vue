@@ -2,25 +2,27 @@
   <v-btn
     elevation="0"
     rounded
-    class="ma-2 text-caption"
+    class="mx-2 my-2"
     :color="selected ? 'primary' : ''"
     @click="handleClick"
   >
-    {{ category.value }}
+    <span class="text-caption">
+      {{ category.value }}
+    </span>
   </v-btn>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
+import { Vue, Prop, Component } from 'vue-property-decorator'
 import { Category } from '~/types/category.type'
-
-const $props = defineProps<{
-  category: Category
-  selected: boolean
-}>()
-
-const $emits = defineEmits(['selectCategory'])
-
-const handleClick = () => {
-  $emits('selectCategory', $props.category)
+@Component
+export default class CategoryFilter extends Vue {
+  @Prop({ type: Object, required: true }) category!: Category
+  @Prop({ type: Boolean, required: true }) selected!: boolean
+  handleClick(): void {
+    this.$emit('selectCategory', this.category)
+  }
 }
 </script>
+
+<style></style>
